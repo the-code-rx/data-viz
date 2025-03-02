@@ -1,0 +1,12 @@
+---
+title: "Survey"
+toc: false
+---
+## This visualization dashboard serves two primary tasks:
+- **Exploratory Analysis:** Users delve into an unknown heart disease dataset to uncover trends, patterns, and potential relationships without prior assumptions, generating new hypotheses.
+
+- **Confirmatory Analysis:** Users then test and validate these hypotheses using statistical methods to assess the significance and strength of the identified relationships.
+
+- **Survey:** Please take the survey to share your thoughts and feedback about the visualization dashboard and how we can improve it and how well it accomplished these tasks.
+
+<iframe src="https://docs.google.com/forms/d/e/1FAIpQLSdoot3sCnvymDEDEE2lrFVrG5c9nyntdRNLsLYOEEldt42SCA/viewform?usp=dialog" width="800" height="1000" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>

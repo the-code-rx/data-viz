@@ -1,0 +1,25 @@
+project:
+  type: website
+
+website:
+  title: "Heart Disease Analysis"
+  navbar:
+    left:
+      - href: index.qmd
+        text: Home
+      - href: about.qmd
+        text: Survey
+
+format:
+  html:
+    theme:
+      - cosmo
+      - brand
+    grid:
+      sidebar-width: 250px
+      body-width: 1000px
+    css: styles.css
+    toc: true
+
+
+

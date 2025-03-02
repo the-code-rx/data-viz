@@ -1,0 +1,1098 @@
+---
+title: "Heart Disease Risk Factor Analysis Dashboard"
+subtitle: "Exploring relationships between health indicators and heart disease"
+author: "Joe Valente"
+date: today
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    toc-title: "Contents"
+    toc-location: left
+    code-fold: true
+    theme: cosmo
+    fig-width: 8
+    fig-height: 6
+execute:
+  echo: false
+---
+
+## Overview {.unnumbered}
+
+This dashboard analyzes a heart disease dataset from Kaggle, examining the relationships between various health indicators, lifestyle factors, and heart disease status. The analysis aims to identify key risk factors and patterns that may contribute to heart disease.
+
+**Data Source:** [Heart Disease Dataset on Kaggle](https://www.kaggle.com/datasets/oktayrdeki/heart-disease)
+
+**Program:** Master of Science in Data Science, University of Colorado Boulder
+
+::: {.callout-note}
+This analysis used a random sample (50%) the original dataset for visualization purposes with Altair. For reproducibility, the sample is set to a random state of 0 in Pandas. `df.sample(frac=0.50, random_state=0)`
+:::
+```{python}
+import pandas as pd
+import altair as alt
+from scipy import stats
+import numpy as np
+
+```
+
+```{python}
+# Load and sample the data to make visualization more manageable
+df = pd.read_csv("heart_disease.csv")
+df = df.sample(frac=0.50, random_state=0)
+```
+
+## Summary Statistics
+
+The table below provides summary statistics for the numerical variables in the dataset. These values give us a baseline understanding of the central tendencies and distributions of key health metrics.
+
+```{python}
+df.describe().round(2)
+```
+
+## Demographic & Lifestyle Factors
+
+This section explores the categorical variables in the dataset, including gender, diabetes status, smoking habits, and other lifestyle factors that may influence heart disease risk.
+
+### Gender and Diabetes Distribution
+
+The charts below show the distribution of participants by gender and diabetes status. Understanding these demographic factors is important as they can significantly affect heart disease risk.
+
+```{python}
+df_gender = df.dropna(subset=["Gender"])
+gender_chart = alt.Chart(df_gender).mark_bar().encode(
+    y="Gender:N",
+    x="count()",
+)
+```
+
+```{python}
+df_diabetes = df.dropna(subset=["Diabetes"])
+diabetes_chart = (
+    alt.Chart(df_diabetes)
+    .mark_bar()
+    .encode(
+        y="Diabetes:N",
+        x="count()",
+    )
+)
+diabetes_chart | gender_chart
+```
+
+### Heart Disease Status and Smoking Habits
+
+These charts display the distribution of heart disease status in the sample and smoking habits. Smoking is a well-known risk factor for cardiovascular disease, and this visualization helps us understand its prevalence in our dataset.
+
+```{python}
+df_smoking = df.dropna(subset=["Smoking"])
+smoking_chart = alt.Chart(df_smoking).mark_bar().encode(
+    y="Smoking:N",
+    x="count()",
+)
+```
+```{python}
+df_heart_disease = df.dropna(subset=["Heart Disease Status"])
+heart_disease_chart = (
+    alt.Chart(df_heart_disease)
+    .mark_bar()
+    .encode(
+        y="Heart Disease Status:N",
+        x="count()",
+    )
+)
+heart_disease_chart | smoking_chart
+```
+
+### Blood Pressure and Cholesterol Status
+
+High blood pressure and high cholesterol are major risk factors for heart disease. These visualizations show the distribution of participants with and without these conditions.
+
+```{python}
+df_high_blood_pressure = df.dropna(subset=["High Blood Pressure"])
+high_blood_pressure_chart = alt.Chart(df_high_blood_pressure).mark_bar().encode(
+    y="High Blood Pressure:N",
+    x="count()",
+)
+```
+```{python}
+df_high_ldl_cholesterol = df.dropna(subset=["High LDL Cholesterol"])
+high_ldl_cholesterol_chart = alt.Chart(df_high_ldl_cholesterol).mark_bar().encode(
+    y="High LDL Cholesterol:N",
+    x="count()",
+)
+high_blood_pressure_chart | high_ldl_cholesterol_chart
+```
+
+### Stress and Sugar Consumption
+
+Stress and dietary factors like sugar consumption can contribute to heart disease risk. These charts show the distribution of stress levels and sugar consumption habits in our sample.
+
+```{python}
+df_stress_level = df.dropna(subset=["Stress Level"])
+stress_level_chart = alt.Chart(df_stress_level).mark_bar().encode(
+    y="Stress Level:N",
+    x="count()",
+)
+```
+```{python}
+df_sugar_consumption = df.dropna(subset=["Sugar Consumption"])
+sugar_consumption_chart = alt.Chart(df_sugar_consumption).mark_bar().encode(
+    y="Sugar Consumption:N",
+    x="count()",
+)
+stress_level_chart | sugar_consumption_chart
+```
+
+### Alcohol Consumption
+
+Alcohol consumption can have complex effects on heart health. This chart displays the distribution of alcohol consumption patterns among participants.
+
+```{python}
+df_alcohol_consumption = df[["Alcohol Consumption"]].fillna("None")
+
+alcohol_consumption_chart = (
+    alt.Chart(df_alcohol_consumption)
+    .mark_bar()
+    .encode(
+        y="Alcohol Consumption:N",
+        x="count()",
+    )
+)
+alcohol_consumption_chart
+```
+
+::: {.callout-important}
+The distribution of the categorical variables are **all** uniform except for the Heart Disease Status. This is seems odd if this dataset is representative of the population and a random sample was taken.
+:::
+
+## Comparing Heart Disease Groups
+
+This section compares participants with and without heart disease to identify potential differences in health metrics and risk factors.
+
+### Summary Statistics by Heart Disease Status
+
+The tables below show summary statistics for participants with and without heart disease. Comparing these values can help identify which metrics differ between the two groups.
+
+#### With Heart Disease
+
+```{python}
+df_heart_disease = df[df["Heart Disease Status"] == "Yes"]
+df_heart_disease.describe().round(2)
+```
+
+#### Without Heart Disease
+
+```{python}
+df_no_heart_disease = df[df["Heart Disease Status"] == "No"]
+df_no_heart_disease.describe().round(2)
+```
+
+::: {.callout-note}
+Looking at these summary statistics, there don't appear to be dramatic differences between groups at first glance. Further statistical analysis is needed to identify significant differences.
+:::
+
+### Correlation Analysis for Heart Disease Group
+
+The heatmap below displays correlations between numerical variables for participants with heart disease. A correlation value ranges from -1 to 1:
+
+- A value close to 1 means that as one variable increases, the other tends to increase as well (positive correlation)
+- A value close to -1 means that as one variable increases, the other tends to decrease (negative correlation)
+- A value close to 0 means there is little to no relationship between the variables
+- For correlations, neither variable is considered dependent or independent since we're measuring their mutual relationship rather than causation
+
+For example, if age and blood pressure had a correlation of 0.8, this would suggest that blood pressure tends to increase with age. The darker colors in the heatmap indicate stronger correlations (either positive or negative).
+
+```{python}
+numeric_columns = df_heart_disease.select_dtypes(include=["number"])
+corr_matrix = numeric_columns.corr()
+
+corr_df = corr_matrix.stack().reset_index()
+corr_df.columns = ["variable_1", "variable_2", "correlation"]
+```
+```{python}
+heatmap = (
+    alt.Chart(corr_df)
+    .mark_rect()
+    .encode(
+        x=alt.X("variable_1:O", title=""),
+        y=alt.Y("variable_2:O", title=""),
+        color=alt.Color(
+            "correlation:Q", scale=alt.Scale(domain=[-1, 1], scheme="blueorange")
+        ),
+        tooltip=["variable_1", "variable_2", "correlation"],
+    )
+    .properties(width=400, height=400, title="Correlation Heatmap")
+)
+
+
+text = (
+    alt.Chart(corr_df)
+    .mark_text()
+    .encode(
+        x="variable_1:O",
+        y="variable_2:O",
+        text=alt.Text("correlation:Q", format=".2f"),
+        color=alt.condition(
+            "abs(datum.correlation) > 0.5", alt.value("white"), alt.value("black")
+        ),
+    )
+)
+
+
+correlation_plot = heatmap + text
+
+
+correlation_plot
+
+```
+
+::: {.callout-note}
+The correlation plot shows that there are no strong correlations between the variables. That is to say, the variables are not highly dependent on one another.
+:::
+
+## Health Metrics by Heart Disease Status
+
+This section uses boxplots to compare the distribution of key health metrics between participants with and without heart disease. Boxplots provide several key insights:
+
+- The box shows the interquartile range (IQR) containing the middle 50% of values:
+- The line inside the box represents the median
+- The whiskers extend to show the rest of the distribution
+- Points beyond the whiskers represent potential outliers
+
+### Age, Blood Pressure, Cholesterol, BMI, and Sleep Hours
+
+These boxplots show how age, blood pressure, cholesterol levels, BMI, and sleep hours differ between those with and without heart disease.
+
+```{python}
+age = (
+    alt.Chart(df)
+    .mark_boxplot()
+    .encode(
+        alt.X("Heart Disease Status"),
+        alt.Y("Age").scale(zero=False),
+        alt.Color("Heart Disease Status:N"),
+    )
+)
+bp = (
+    alt.Chart(df)
+    .mark_boxplot()
+    .encode(
+        alt.X("Heart Disease Status"),
+        alt.Y("Blood Pressure").scale(zero=False),
+        alt.Color("Heart Disease Status:N"),
+    )
+)
+
+chol = (
+    alt.Chart(df)
+    .mark_boxplot()
+    .encode(
+        alt.X("Heart Disease Status:N"),
+        alt.Y("Cholesterol Level:Q").scale(zero=False),
+        alt.Color("Heart Disease Status:N"),
+    )
+)
+
+
+bmi = (
+    alt.Chart(df)
+    .mark_boxplot()
+    .encode(
+        alt.X("Heart Disease Status"),
+        alt.Y("BMI").scale(zero=False),
+        alt.Color("Heart Disease Status:N"),
+    )
+)
+sleep_hours = (
+    alt.Chart(df)
+    .mark_boxplot()
+    .encode(
+        alt.X("Heart Disease Status"),
+        alt.Y("Sleep Hours").scale(zero=False),
+        alt.Color("Heart Disease Status:N"),
+    )
+)
+
+
+chol | bp | age | bmi | sleep_hours
+
+```
+
+
+### Triglycerides, Blood Sugar, CRP, and Homocysteine
+
+These additional boxplots examine differences in triglyceride levels, fasting blood sugar, CRP (C-reactive protein) levels, and homocysteine levels between the two groups.
+
+```{python}
+triglycerides = (
+    alt.Chart(df)
+    .mark_boxplot()
+    .encode(
+        alt.X("Heart Disease Status"),
+        alt.Y("Triglyceride Level:Q").scale(zero=False),
+        alt.Color("Heart Disease Status:N"),
+    )
+)
+
+blood_sugar = (
+    alt.Chart(df)
+    .mark_boxplot()
+    .encode(
+        alt.X("Heart Disease Status"),
+        alt.Y("Fasting Blood Sugar:Q").scale(zero=False),
+        alt.Color("Heart Disease Status:N"),
+    )
+)
+
+crp_level = (
+    alt.Chart(df)
+    .mark_boxplot()
+    .encode(
+        alt.X("Heart Disease Status"),
+        alt.Y("CRP Level:Q").scale(zero=False),
+        alt.Color("Heart Disease Status:N"),
+    )
+)
+
+homocysteine = (
+    alt.Chart(df)
+    .mark_boxplot()
+    .encode(
+        alt.X("Heart Disease Status"),
+        alt.Y("Homocysteine Level:Q").scale(zero=False),
+        alt.Color("Heart Disease Status:N"),
+    )
+)
+
+triglycerides | blood_sugar | crp_level | homocysteine
+```
+
+## Statistical Analysis
+
+This section performs statistical tests to determine if the observed differences between groups are statistically significant.
+
+### BMI Analysis
+
+First, we check if BMI is normally distributed using a QQ plot, and then conduct a t-test to compare mean BMI between participants with and without heart disease.
+
+```{python}
+sorted_bmi = df["BMI"].dropna().sort_values()
+n = len(df["BMI"].dropna())
+
+probability = (np.arange(1, n + 1) - 0.5) / n
+theoretical_quantiles = stats.norm.ppf(probability)
+
+df_qq_plot = pd.DataFrame(
+    {"Sample Quantiles": sorted_bmi, "Theoretical Quantiles": theoretical_quantiles}
+)
+
+qq_plot = (
+    alt.Chart(df_qq_plot)
+    .mark_point()
+    .encode(x="Theoretical Quantiles:Q", y="Sample Quantiles:Q")
+)
+mean_val = sorted_bmi.mean()
+std_val = sorted_bmi.std()
+
+
+line_data = pd.DataFrame(
+    {
+        "Theoretical Quantiles": theoretical_quantiles,
+        "Expected Normal": mean_val + std_val * theoretical_quantiles,
+    }
+)
+
+line_chart = (
+    alt.Chart(line_data)
+    .mark_line(color="red")
+    .encode(x="Theoretical Quantiles:Q", y="Expected Normal:Q")
+)
+
+qq_plot + line_chart
+
+```
+
+::: {.callout-note}
+The QQ plot shows that BMI follows a roughly normal distribution, with some deviation in the tails. This suggests a t-test is appropriate for comparing means.
+:::
+
+```{python}
+df_heart_disease = df[df["Heart Disease Status"] == "Yes"].dropna(subset=["BMI"])
+df_no_heart_disease = df[df["Heart Disease Status"] == "No"].dropna(subset=["BMI"])
+t_statistic, p_value = stats.ttest_ind(
+    df_no_heart_disease["BMI"],
+    df_heart_disease["BMI"],
+    equal_var=False,
+)
+print(f"\nT-test results between Heart Disease Status for BMI:")
+print(f"t-statistic: {t_statistic.round(3)}")
+print(f"p-value: {p_value.round(3)}")
+if p_value < 0.05:
+    print("There is a significant difference in BMI between heart disease status.")
+    print(
+        f"Mean BMI and having heart disease: {df_heart_disease['BMI'].mean().round(2)}"
+    )
+    print(
+        f"Mean BMI and no heart disease: {df_no_heart_disease['BMI'].mean().round(2)}"
+    )
+else:
+    print("There is no significant difference in BMI between heart disease status.")
+```
+
+### Blood Pressure Analysis
+
+Similarly, we check the normality of blood pressure data and conduct a t-test to compare means between groups.
+
+```{python}
+sorted_bp = df["Blood Pressure"].dropna().sort_values()
+n = len(df["Blood Pressure"].dropna())
+
+probability = (np.arange(1, n + 1) - 0.5) / n
+theoretical_quantiles = stats.norm.ppf(probability)
+
+df_qq_plot = pd.DataFrame(
+    {"Sample Quantiles": sorted_bp, "Theoretical Quantiles": theoretical_quantiles}
+)
+
+qq_plot = (
+    alt.Chart(df_qq_plot)
+    .mark_point()
+    .encode(x="Theoretical Quantiles:Q", y="Sample Quantiles:Q")
+)
+mean_val = sorted_bp.mean()
+std_val = sorted_bp.std()
+
+
+line_data = pd.DataFrame(
+    {
+        "Theoretical Quantiles": theoretical_quantiles,
+        "Expected Normal": mean_val + std_val * theoretical_quantiles,
+    }
+)
+
+line_chart = (
+    alt.Chart(line_data)
+    .mark_line(color="red")
+    .encode(x="Theoretical Quantiles:Q", y="Expected Normal:Q")
+)
+
+qq_plot + line_chart
+
+```
+
+```{python}
+df_heart_disease = df[df["Heart Disease Status"] == "Yes"].dropna(
+    subset=["Blood Pressure"]
+)
+df_no_heart_disease = df[df["Heart Disease Status"] == "No"].dropna(
+    subset=["Blood Pressure"]
+)
+t_statistic, p_value = stats.ttest_ind(
+    df_no_heart_disease["Blood Pressure"],
+    df_heart_disease["Blood Pressure"],
+    equal_var=False,
+)
+print(f"\nT-test results between Heart Disease Status for Blood Pressure:")
+print(f"t-statistic: {t_statistic.round(3)}")
+print(f"p-value: {p_value.round(3)}")
+if p_value < 0.05:
+    print(
+        "There is a significant difference in Blood Pressure between heart disease status."
+    )
+    print(
+        f"Mean Blood Pressure and having heart disease: {df_heart_disease['Blood Pressure'].mean().round(2)}"
+    )
+    print(
+        f"Mean Blood Pressure and no heart disease: {df_no_heart_disease['Blood Pressure'].mean().round(2)}"
+    )
+else:
+    print(
+        "There is no significant difference in Blood Pressure between heart disease status."
+    )
+```
+
+### Cholesterol Level Analysis
+
+Finally, we analyze cholesterol levels using the same approach.
+
+```{python}
+sorted_chol = df["Cholesterol Level"].dropna().sort_values()
+n = len(df["Cholesterol Level"].dropna())
+
+probability = (np.arange(1, n + 1) - 0.5) / n
+theoretical_quantiles = stats.norm.ppf(probability)
+
+df_qq_plot = pd.DataFrame(
+    {"Sample Quantiles": sorted_chol, "Theoretical Quantiles": theoretical_quantiles}
+)
+
+qq_plot = (
+    alt.Chart(df_qq_plot)
+    .mark_point()
+    .encode(x="Theoretical Quantiles:Q", y="Sample Quantiles:Q")
+)
+mean_val = sorted_chol.mean()
+std_val = sorted_chol.std()
+
+
+line_data = pd.DataFrame(
+    {
+        "Theoretical Quantiles": theoretical_quantiles,
+        "Expected Normal": mean_val + std_val * theoretical_quantiles,
+    }
+)
+
+line_chart = (
+    alt.Chart(line_data)
+    .mark_line(color="red")
+    .encode(x="Theoretical Quantiles:Q", y="Expected Normal:Q")
+)
+
+qq_plot + line_chart
+
+```
+
+```{python}
+df_heart_disease = df[df["Heart Disease Status"] == "Yes"].dropna(
+    subset=["Cholesterol Level"]
+)
+df_no_heart_disease = df[df["Heart Disease Status"] == "No"].dropna(
+    subset=["Cholesterol Level"]
+)
+t_statistic, p_value = stats.ttest_ind(
+    df_no_heart_disease["Cholesterol Level"],
+    df_heart_disease["Cholesterol Level"],
+    equal_var=False,
+)
+print(f"\nT-test results between Heart Disease Status for Cholesterol Level:")
+print(f"t-statistic: {t_statistic.round(3)}")
+print(f"p-value: {p_value.round(3)}")
+if p_value < 0.05:
+    print(
+        "There is a significant difference in Cholesterol Level between heart disease status."
+    )
+    print(
+        f"Mean Cholesterol Level and having heart disease: {df_heart_disease['Cholesterol Level'].mean().round(2)}"
+    )
+    print(
+        f"Mean Cholesterol Level and no heart disease: {df_no_heart_disease['Cholesterol Level'].mean().round(2)}"
+    )
+else:
+    print(
+        "There is no significant difference in Cholesterol Level between heart disease status."
+    )
+```
+
+## Interactive Risk Factor Analysis
+
+This section provides interactive visualizations to explore relationships between age, various health metrics, and heart disease status across different lifestyle groups.
+
+### Smoking and Heart Disease
+
+These interactive plots allow exploration of the relationship between age, various health metrics, and heart disease status specifically for smokers and non-smokers.
+
+```{python}
+df_smoking = df[df["Smoking"] == "Yes"]
+numeric_columns = df_smoking.select_dtypes(include=["number"]).columns.tolist()
+
+
+y_axis_param = alt.param(
+    name="y_axis_param",
+    value=numeric_columns[0],
+    bind=alt.binding_select(options=numeric_columns, name="Y-Axis Variable"),
+)
+
+
+input_dropdown = alt.binding_select(
+    options=[None, "Yes", "No"],
+    labels=["All", "Yes", "No"],
+    name="Heart Disease Status",
+)
+heart_disease_selection = alt.selection_point(
+    fields=["Heart Disease Status"], bind=input_dropdown, name="HeartDisease"
+)
+color = alt.condition(
+    heart_disease_selection,
+    alt.Color("Heart Disease Status:N").title("Heart Disease Status"),
+    alt.value("#f8f8f8"),
+)
+
+chart = (
+    alt.Chart(df_smoking)
+    # Fold numeric columns into key-value pairs
+    .transform_fold(numeric_columns, as_=["yaxis_field", "yaxis_value"])
+    .mark_circle(size=50)
+    .encode(
+        x=alt.X("Age:Q", title="Age", scale=alt.Scale(zero=False)),
+        y=alt.Y(
+            "yaxis_value:Q",
+            title="Selected Variable",
+            scale=alt.Scale(zero=False),
+        ),
+        color=color,
+        tooltip=[
+            "Age",
+            "Heart Disease Status",
+        ],
+    )
+    .properties(
+        title=alt.TitleParams(
+            text="Smokers",
+            anchor="middle",
+            fontSize=16,
+            fontWeight="bold",
+        )
+    )
+    .add_params(heart_disease_selection, y_axis_param)
+    .transform_filter(alt.datum.yaxis_field == y_axis_param)
+)
+
+regression_line = (
+    chart.transform_regression(
+        "Age",
+        "yaxis_value",
+        as_=["reg_Age", "reg_yaxis_value"],
+    )
+    .mark_line()
+    .encode(
+        x=alt.X("reg_Age:Q"),
+        y=alt.Y("reg_yaxis_value:Q"),
+        color=alt.value("#3b3b3b"),
+    )
+)
+
+plot_smoking = chart + regression_line
+
+```
+
+::: {.callout-tip}
+**How to use:** Select different health metrics from the dropdown menu to see how they relate to age among smokers. Use the Heart Disease Status filter to compare those with and without heart disease.
+:::
+
+```{python}
+df_non_smoking = df[df["Smoking"] == "No"]
+numeric_columns = df_non_smoking.select_dtypes(include=["number"]).columns.tolist()
+
+y_axis_param = alt.param(
+    name="y_axis_param",
+    value=numeric_columns[0],
+    bind=alt.binding_select(options=numeric_columns, name="Y-Axis Variable"),
+)
+
+input_dropdown = alt.binding_select(
+    options=[None, "Yes", "No"],
+    labels=["All", "Yes", "No"],
+    name="Heart Disease Status",
+)
+heart_disease_selection = alt.selection_point(
+    fields=["Heart Disease Status"], bind=input_dropdown, name="HeartDisease"
+)
+color = alt.condition(
+    heart_disease_selection,
+    alt.Color("Heart Disease Status:N").title("Heart Disease Status"),
+    alt.value("#f8f8f8"),
+)
+
+chart = (
+    alt.Chart(df_non_smoking)
+    .transform_fold(numeric_columns, as_=["yaxis_field", "yaxis_value"])
+    .mark_circle(size=50)
+    .encode(
+        x=alt.X("Age:Q", title="Age", scale=alt.Scale(zero=False)),
+        y=alt.Y(
+            "yaxis_value:Q",
+            title="Selected Variable",
+            scale=alt.Scale(zero=False),
+        ),
+        color=color,
+        tooltip=[
+            "Age",
+            "Heart Disease Status",
+        ],
+    )
+    .properties(
+        title=alt.TitleParams(
+            text="Non-Smokers",
+            anchor="middle",
+            fontSize=16,
+            fontWeight="bold",
+        )
+    )
+    .add_params(heart_disease_selection, y_axis_param)
+    .transform_filter(alt.datum.yaxis_field == y_axis_param)
+)
+
+regression_line = (
+    chart.transform_regression(
+        "Age",
+        "yaxis_value",
+        as_=["reg_Age", "reg_yaxis_value"],
+    )
+    .mark_line()
+    .encode(
+        x=alt.X("reg_Age:Q"),
+        y=alt.Y("reg_yaxis_value:Q"),
+        color=alt.value("#3b3b3b"),
+    )
+)
+
+plot_non_smoking = chart + regression_line
+plot_smoking | plot_non_smoking
+```
+
+### Combined Risk Factors
+
+These visualizations examine the combined effects of multiple risk factors, specifically smoking combined with diabetes or high alcohol consumption.
+
+```{python}
+df_smoking_diabetes = df_smoking[df_smoking["Diabetes"] == "Yes"]
+numeric_columns = df_smoking_diabetes.select_dtypes(include=["number"]).columns.tolist()
+
+
+y_axis_param = alt.param(
+    name="y_axis_param",
+    value=numeric_columns[0],
+    bind=alt.binding_select(options=numeric_columns, name="Y-Axis Variable"),
+)
+
+input_dropdown = alt.binding_select(
+    options=[None, "Yes", "No"],
+    labels=["All", "Yes", "No"],
+    name="Heart Disease Status",
+)
+heart_disease_selection = alt.selection_point(
+    fields=["Heart Disease Status"], bind=input_dropdown, name="HeartDisease"
+)
+color = alt.condition(
+    heart_disease_selection,
+    alt.Color("Heart Disease Status:N").title("Heart Disease Status"),
+    alt.value("#f8f8f8"),
+)
+chart = (
+    alt.Chart(df_smoking_diabetes)
+    .transform_fold(numeric_columns, as_=["yaxis_field", "yaxis_value"])
+    .mark_circle(size=50)
+    .encode(
+        x=alt.X("Age:Q", title="Age", scale=alt.Scale(zero=False)),  # y is now Age
+        y=alt.Y(
+            "yaxis_value:Q",
+            title="Selected Variable",
+            scale=alt.Scale(zero=False),
+        ),
+        color=color,
+        tooltip=[
+            "Age",
+            "Heart Disease Status",
+        ],
+    )
+    .properties(
+        title=alt.TitleParams(
+            text="Smokers with Diabetes",
+            anchor="middle",
+            fontSize=16,
+            fontWeight="bold",
+        )
+    )
+    .add_params(heart_disease_selection, y_axis_param)
+    .transform_filter(alt.datum.yaxis_field == y_axis_param)
+)
+regression_line = (
+    chart.transform_regression(
+        "Age",
+        "yaxis_value",
+        as_=["reg_Age", "reg_yaxis_value"],
+    )
+    .mark_line()
+    .encode(
+        y=alt.Y("reg_yaxis_value:Q"),
+        x=alt.X("reg_Age:Q"),
+        color=alt.value("#3b3b3b"),
+    )
+)
+plot_smoking_diabetes = chart + regression_line
+
+```
+
+```{python}
+df_smoking_alcohol = df_smoking[df_smoking["Alcohol Consumption"] == "High"]
+numeric_columns = df_smoking_alcohol.select_dtypes(include=["number"]).columns.tolist()
+
+
+y_axis_param = alt.param(
+    name="y_axis_param",
+    value=numeric_columns[0],
+    bind=alt.binding_select(options=numeric_columns, name="Y-Axis Variable"),
+)
+
+input_dropdown = alt.binding_select(
+    options=[None, "Yes", "No"],
+    labels=["All", "Yes", "No"],
+    name="Heart Disease Status",
+)
+heart_disease_selection = alt.selection_point(
+    fields=["Heart Disease Status"], bind=input_dropdown, name="HeartDisease"
+)
+color = alt.condition(
+    heart_disease_selection,
+    alt.Color("Heart Disease Status:N").title("Heart Disease Status"),
+    alt.value("#f8f8f8"),
+)
+chart = (
+    alt.Chart(df_smoking_alcohol)
+    .transform_fold(numeric_columns, as_=["yaxis_field", "yaxis_value"])
+    .mark_circle(size=50)
+    .encode(
+        x=alt.X("Age:Q", title="Age", scale=alt.Scale(zero=False)),
+        y=alt.Y(
+            "yaxis_value:Q",
+            title="Selected Variable",
+            scale=alt.Scale(zero=False),
+        ),
+        color=color,
+        tooltip=[
+            "Age",
+            "Heart Disease Status",
+        ],
+    )
+    .properties(
+        title=alt.TitleParams(
+            text="Smokers w/ High Alcohol Consumption",
+            anchor="middle",
+            fontSize=16,
+            fontWeight="bold",
+        )
+    )
+    .add_params(heart_disease_selection, y_axis_param)
+    .transform_filter(alt.datum.yaxis_field == y_axis_param)
+)
+regression_line = (
+    chart.transform_regression(
+        "Age",
+        "yaxis_value",
+        as_=["reg_Age", "reg_yaxis_value"],
+    )
+    .mark_line()
+    .encode(
+        y=alt.Y("reg_yaxis_value:Q"),
+        x=alt.X("reg_Age:Q"),
+        color=alt.value("#3b3b3b"),
+    )
+)
+plot_smoking_alcohol = chart + regression_line
+plot_smoking_alcohol | plot_smoking_diabetes
+```
+
+### Low-Risk vs High-Risk Group Analysis
+
+This visualization examines participants with minimal risk factors: non-smokers who do not consume alcohol. The high-risk group is smokers who consume alcohol with a family history of heart disease.
+
+```{python}
+df["Alcohol Consumption"] = df["Alcohol Consumption"].fillna("None")
+df_non_smoking_no_alcohol = df[
+    (df["Alcohol Consumption"] == "None") & (df["Smoking"] == "No")
+]
+
+numeric_columns = df_non_smoking_no_alcohol.select_dtypes(
+    include=["number"]
+).columns.tolist()
+
+
+y_axis_param = alt.param(
+    name="y_axis_param",
+    value=numeric_columns[0],
+    bind=alt.binding_select(options=numeric_columns, name="Y-Axis Variable"),
+)
+
+input_dropdown = alt.binding_select(
+    options=[None, "Yes", "No"],
+    labels=["All", "Yes", "No"],
+    name="Heart Disease Status",
+)
+heart_disease_selection = alt.selection_point(
+    fields=["Heart Disease Status"], bind=input_dropdown, name="HeartDisease"
+)
+color = alt.condition(
+    heart_disease_selection,
+    alt.Color("Heart Disease Status:N").title("Heart Disease Status"),
+    alt.value("#f8f8f8"),
+)
+chart = (
+    alt.Chart(df_non_smoking_no_alcohol)
+    .transform_fold(numeric_columns, as_=["yaxis_field", "yaxis_value"])
+    .mark_circle(size=50)
+    .encode(
+        x=alt.X("Age:Q", title="Age", scale=alt.Scale(zero=False)),
+        y=alt.Y(
+            "yaxis_value:Q",
+            title="Selected Variable",
+            scale=alt.Scale(zero=False),
+        ),
+        color=color,
+        tooltip=[
+            "Age",
+            "Heart Disease Status",
+        ],
+    )
+    .properties(
+        title=alt.TitleParams(
+            text="Non-Smokers w/ No Alcohol Consumption",
+            anchor="middle",
+            fontSize=16,
+            fontWeight="bold",
+        )
+    )
+    .add_params(heart_disease_selection, y_axis_param)
+    .transform_filter(alt.datum.yaxis_field == y_axis_param)
+)
+regression_line = (
+    chart.transform_regression(
+        "Age",
+        "yaxis_value",
+        as_=["reg_Age", "reg_yaxis_value"],
+    )
+    .mark_line()
+    .encode(
+        y=alt.Y("reg_yaxis_value:Q"),
+        x=alt.X("reg_Age:Q"),
+        color=alt.value("#3b3b3b"),
+    )
+)
+plot_non_smoking_no_alcohol = chart + regression_line
+
+
+```
+
+.
+
+```{python}
+df_high_risk = df_smoking[
+    (df_smoking["Alcohol Consumption"] == "High")
+    & (df_smoking["Family Heart Disease"] == "Yes")
+]
+
+numeric_columns = df_high_risk.select_dtypes(include=["number"]).columns.tolist()
+
+
+y_axis_param = alt.param(
+    name="y_axis_param",
+    value=numeric_columns[0],
+    bind=alt.binding_select(options=numeric_columns, name="Y-Axis Variable"),
+)
+
+input_dropdown = alt.binding_select(
+    options=[None, "Yes", "No"],
+    labels=["All", "Yes", "No"],
+    name="Heart Disease Status",
+)
+heart_disease_selection = alt.selection_point(
+    fields=["Heart Disease Status"], bind=input_dropdown, name="HeartDisease"
+)
+color = alt.condition(
+    heart_disease_selection,
+    alt.Color("Heart Disease Status:N").title("Heart Disease Status"),
+    alt.value("#f8f8f8"),
+)
+chart = (
+    alt.Chart(df_high_risk)
+    .transform_fold(numeric_columns, as_=["yaxis_field", "yaxis_value"])
+    .mark_circle(size=50)
+    .encode(
+        x=alt.X("Age:Q", title="Age", scale=alt.Scale(zero=False)),
+        y=alt.Y(
+            "yaxis_value:Q",
+            title="Selected Variable",
+            scale=alt.Scale(zero=False),
+        ),
+        color=color,
+        tooltip=[
+            "Age",
+            "Heart Disease Status",
+        ],
+    )
+    .properties(
+        title=alt.TitleParams(
+            text="High-Risk Group",
+            anchor="middle",
+            fontSize=16,
+            fontWeight="bold",
+        )
+    )
+    .add_params(heart_disease_selection, y_axis_param)
+    .transform_filter(alt.datum.yaxis_field == y_axis_param)
+)
+regression_line = (
+    chart.transform_regression(
+        "Age",
+        "yaxis_value",
+        as_=["reg_Age", "reg_yaxis_value"],
+    )
+    .mark_line()
+    .encode(
+        y=alt.Y("reg_yaxis_value:Q"),
+        x=alt.X("reg_Age:Q"),
+        color=alt.value("#3b3b3b"),
+    )
+)
+plot_high_risk = chart + regression_line
+plot_non_smoking_no_alcohol | plot_high_risk
+```
+```{python}
+df_high_risk = df_smoking[
+    (df_smoking["Alcohol Consumption"] == "High")
+    & (df_smoking["Family Heart Disease"] == "Yes")
+    & (df_smoking["Heart Disease Status"] == "Yes")
+]
+df_high_risk = df_high_risk.dropna(subset=["Sleep Hours"])
+df_low_risk = df[
+    (df["Alcohol Consumption"] == "None")
+    & (df["Smoking"] == "No")
+    & (df["Heart Disease Status"] == "No")
+]
+df_low_risk = df_low_risk.dropna(subset=["Sleep Hours"])
+```
+::: {.callout-tip}
+After you play with the plots, you may notice that the high risk group has a higher average sleep hours. We will test this hypothesis with a t-test to see if the difference is statistically significant.
+:::
+```{python}
+t_statistic, p_value = stats.ttest_ind(
+    df_high_risk["Sleep Hours"],
+    df_low_risk["Sleep Hours"],
+    equal_var=False,
+)
+print(f"\nT-test results between High-Risk and Low-Risk Groups for Sleep Hours:")
+print(f"t-statistic: {t_statistic.round(3)}")
+print(f"p-value: {p_value.round(3)}")
+if p_value < 0.05:
+    print(
+        "There is a significant difference in Sleep Hours between High-Risk and Low-Risk Groups."
+    )
+    print(
+        f"Mean Sleep Hours and High-Risk: {df_high_risk['Sleep Hours'].mean().round(2)}"
+    )
+    print(
+        f"Mean Sleep Hours and Low-Risk: {df_low_risk['Sleep Hours'].mean().round(2)}"
+    )
+else:
+    print(
+        "There is no significant difference in Sleep Hours between High-Risk and Low-Risk Groups."
+    )
+```
+
+## Key Findings {.unnumbered}
+
+Based on the analyses performed, here are the key findings from this dataset:
+
+1. **Significant Results**: There was no statistically significant results found in the t-tests for blood pressure, cholesterol level, or BMI. Other tests could be performed to find the relationship between the variables but do to the uniform nature of the data we probably need to use more complex models.
+
+2. **Risk Factor Combinations**: The interactive visualizations suggest that combinations of risk factors (smoking with high alcohol consumption) may have compounding effects on health like fasting blood sugar levels.
+
+3. **Age Relationships**: The regression lines in the interactive plots show how the relationship between age and various health metrics differs across lifestyle groups and heart disease status.
+
+4. **Data Distribution**: The dataset is uniform in the distribution of the categorical variables.
+
+## Limitations and Future Work {.unnumbered}
+
+- The dataset is designed for machine learning and therefore has a uniform distribution of the categorical variables to help with classification tasks. However, this makes it difficult to make any definitive conclusions about the relationship between the variables with simple statistical models.
+- Further multivariate analyses could help identify interactions between multiple risk factors.
+- Predictive modeling should be applied to determine which factors best predict heart disease status as simple statistical models are not sufficient to make any definitive conclusions.
+- Additional lifestyle and genetic factors not included in this dataset may play important roles in heart disease risk.

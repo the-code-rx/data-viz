@@ -1,0 +1,142 @@
+[
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Heart Disease Risk Factor Analysis Dashboard",
+    "section": "",
+    "text": "This dashboard analyzes a heart disease dataset from Kaggle, examining the relationships between various health indicators, lifestyle factors, and heart disease status. The analysis aims to identify key risk factors and patterns that may contribute to heart disease.\nData Source: Heart Disease Dataset on Kaggle\nProgram: Master of Science in Data Science, University of Colorado Boulder\n\n\n\n\n\n\nNote\n\n\n\nThis analysis used a random sample (50%) the original dataset for visualization purposes with Altair. For reproducibility, the sample is set to a random state of 0 in Pandas. df.sample(frac=0.50, random_state=0)"
+  },
+  {
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "Survey",
+    "section": "",
+    "text": "Exploratory Analysis: Users delve into an unknown heart disease dataset to uncover trends, patterns, and potential relationships without prior assumptions, generating new hypotheses.\nConfirmatory Analysis: Users then test and validate these hypotheses using statistical methods to assess the significance and strength of the identified relationships.\nSurvey: Please take the survey to share your thoughts and feedback about the visualization dashboard and how we can improve it and how well it accomplished these tasks.\n\n\nLoading…"
+  },
+  {
+    "objectID": "index.html#variables-contained-in-the-dataset",
+    "href": "index.html#variables-contained-in-the-dataset",
+    "title": "Visualization Project",
+    "section": "",
+    "text": "These are the variables contained in the dataset with Heart Disease as the target variable."
+  },
+  {
+    "objectID": "index.html#summary-statistics",
+    "href": "index.html#summary-statistics",
+    "title": "Heart Disease Risk Factor Analysis Dashboard",
+    "section": "Summary Statistics",
+    "text": "Summary Statistics\nThe table below provides summary statistics for the numerical variables in the dataset. These values give us a baseline understanding of the central tendencies and distributions of key health metrics.\n\n\n\n\n\n\n\n\n\nAge\nBlood Pressure\nCholesterol Level\nBMI\nSleep Hours\nTriglyceride Level\nFasting Blood Sugar\nCRP Level\nHomocysteine Level\n\n\n\n\ncount\n4986.00\n4989.00\n4982.00\n4990.00\n4988.00\n4994.00\n4989.00\n4985.00\n4989.00\n\n\nmean\n49.57\n149.79\n225.35\n29.01\n6.99\n249.28\n119.92\n7.48\n12.44\n\n\nstd\n18.14\n17.58\n43.58\n6.34\n1.76\n87.04\n23.63\n4.32\n4.33\n\n\nmin\n18.00\n120.00\n150.00\n18.00\n4.00\n100.00\n80.00\n0.01\n5.01\n\n\n25%\n34.00\n134.00\n187.00\n23.46\n5.45\n175.00\n99.00\n3.70\n8.67\n\n\n50%\n50.00\n150.00\n226.00\n29.04\n6.99\n248.00\n120.00\n7.49\n12.35\n\n\n75%\n65.00\n165.00\n263.00\n34.48\n8.55\n324.00\n141.00\n11.18\n16.13\n\n\nmax\n80.00\n180.00\n300.00\n40.00\n10.00\n400.00\n160.00\n15.00\n20.00"
+  },
+  {
+    "objectID": "index.html#categorical-variables-visualization-and-analysis",
+    "href": "index.html#categorical-variables-visualization-and-analysis",
+    "title": "Visualization Project",
+    "section": "",
+    "text": "The following are the counts of the categorical variables in the dataset."
+  },
+  {
+    "objectID": "index.html#smoking-and-heart-disease",
+    "href": "index.html#smoking-and-heart-disease",
+    "title": "Visualization Project",
+    "section": "",
+    "text": "The following are the counts of the smoking and heart disease variables in the dataset."
+  },
+  {
+    "objectID": "index.html#high-blood-pressure-and-high-ldl-cholesterol",
+    "href": "index.html#high-blood-pressure-and-high-ldl-cholesterol",
+    "title": "Visualization Project",
+    "section": "",
+    "text": "The following are the counts of the high blood pressure and high LDL cholesterol variables in the dataset."
+  },
+  {
+    "objectID": "index.html#stress-level-and-sugar-consumption",
+    "href": "index.html#stress-level-and-sugar-consumption",
+    "title": "Visualization Project",
+    "section": "",
+    "text": "The following are the counts of the stress level and sugar consumption variables in the dataset."
+  },
+  {
+    "objectID": "index.html#alcohol-consumption-and-heart-disease",
+    "href": "index.html#alcohol-consumption-and-heart-disease",
+    "title": "Visualization Project",
+    "section": "",
+    "text": "The following are the counts of the alcohol consumption and heart disease variables in the dataset."
+  },
+  {
+    "objectID": "index.html#analyzing-group-with-heart-disease-vs.-no-heart-disease",
+    "href": "index.html#analyzing-group-with-heart-disease-vs.-no-heart-disease",
+    "title": "Visualization Project",
+    "section": "",
+    "text": "Age\nBlood Pressure\nCholesterol Level\nBMI\nSleep Hours\nTriglyceride Level\nFasting Blood Sugar\nCRP Level\nHomocysteine Level\n\n\n\n\ncount\n1022.00\n1021.00\n1019.00\n1022.00\n1022.00\n1022.00\n1019.00\n1019.00\n1021.00\n\n\nmean\n49.32\n149.71\n226.46\n29.07\n6.98\n250.20\n119.80\n7.36\n12.43\n\n\nstd\n18.35\n17.51\n43.01\n6.18\n1.79\n87.19\n23.57\n4.26\n4.37\n\n\nmin\n18.00\n120.00\n150.00\n18.01\n4.00\n100.00\n80.00\n0.01\n5.02\n\n\n25%\n34.00\n134.00\n189.00\n23.73\n5.40\n177.00\n99.00\n3.80\n8.61\n\n\n50%\n49.00\n150.00\n227.00\n29.27\n6.98\n245.50\n119.00\n7.24\n12.45\n\n\n75%\n66.00\n165.00\n265.00\n34.31\n8.56\n327.75\n141.00\n11.02\n16.24\n\n\nmax\n80.00\n180.00\n300.00\n39.94\n10.00\n400.00\n160.00\n15.00\n20.00\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nAge\nBlood Pressure\nCholesterol Level\nBMI\nSleep Hours\nTriglyceride Level\nFasting Blood Sugar\nCRP Level\nHomocysteine Level\n\n\n\n\ncount\n3964.00\n3968.00\n3963.00\n3968.00\n3966.00\n3972.00\n3970.00\n3966.00\n3968.00\n\n\nmean\n49.63\n149.81\n225.07\n28.99\n7.00\n249.05\n119.96\n7.51\n12.44\n\n\nstd\n18.09\n17.60\n43.73\n6.38\n1.75\n87.01\n23.65\n4.34\n4.32\n\n\nmin\n18.00\n120.00\n150.00\n18.00\n4.00\n100.00\n80.00\n0.01\n5.01\n\n\n25%\n34.00\n134.00\n187.00\n23.43\n5.46\n174.00\n99.00\n3.68\n8.69\n\n\n50%\n50.00\n149.00\n226.00\n28.98\n7.00\n248.00\n120.00\n7.55\n12.33\n\n\n75%\n65.00\n165.00\n262.50\n34.55\n8.55\n323.00\n141.00\n11.21\n16.10\n\n\nmax\n80.00\n180.00\n300.00\n40.00\n10.00\n400.00\n160.00\n15.00\n20.00\n\n\n\n\n\n\n\nThe above summary statistics don’t show any significant differences between the two groups upon first inspection."
+  },
+  {
+    "objectID": "index.html#boxplots-for-cholesterol-level-blood-pressure-and-age",
+    "href": "index.html#boxplots-for-cholesterol-level-blood-pressure-and-age",
+    "title": "Visualization Project",
+    "section": "",
+    "text": "precision    recall  f1-score   support\n\n           0       0.00      0.00      0.00       504\n           1       0.21      1.00      0.34       130\n\n    accuracy                           0.21       634\n   macro avg       0.10      0.50      0.17       634\nweighted avg       0.04      0.21      0.07       634\n\nAUC-ROC: 0.504800061050061\n\n\n/Users/joeyv/data_science/colorado/the-code-rx/.venv/lib/python3.13/site-packages/sklearn/utils/validation.py:1408: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().\n  y = column_or_1d(y, warn=True)\n/Users/joeyv/data_science/colorado/the-code-rx/.venv/lib/python3.13/site-packages/sklearn/metrics/_classification.py:1565: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 in labels with no predicted samples. Use `zero_division` parameter to control this behavior.\n  _warn_prf(average, modifier, f\"{metric.capitalize()} is\", len(result))\n/Users/joeyv/data_science/colorado/the-code-rx/.venv/lib/python3.13/site-packages/sklearn/metrics/_classification.py:1565: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 in labels with no predicted samples. Use `zero_division` parameter to control this behavior.\n  _warn_prf(average, modifier, f\"{metric.capitalize()} is\", len(result))\n/Users/joeyv/data_science/colorado/the-code-rx/.venv/lib/python3.13/site-packages/sklearn/metrics/_classification.py:1565: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 in labels with no predicted samples. Use `zero_division` parameter to control this behavior.\n  _warn_prf(average, modifier, f\"{metric.capitalize()} is\", len(result))"
+  },
+  {
+    "objectID": "index.html#statistical-analysis",
+    "href": "index.html#statistical-analysis",
+    "title": "Heart Disease Risk Factor Analysis Dashboard",
+    "section": "Statistical Analysis",
+    "text": "Statistical Analysis\nThis section performs statistical tests to determine if the observed differences between groups are statistically significant.\n\nBMI Analysis\nFirst, we check if BMI is normally distributed using a QQ plot, and then conduct a t-test to compare mean BMI between participants with and without heart disease.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nNote\n\n\n\nThe QQ plot shows that BMI follows a roughly normal distribution, with some deviation in the tails. This suggests a t-test is appropriate for comparing means.\n\n\n\n\n\nT-test results between Heart Disease Status for BMI:\nt-statistic: -0.347\np-value: 0.728\nThere is no significant difference in BMI between heart disease status.\n\n\n\n\nBlood Pressure Analysis\nSimilarly, we check the normality of blood pressure data and conduct a t-test to compare means between groups.\n\n\n\n\n\n\n\n\n\n\n\nT-test results between Heart Disease Status for Blood Pressure:\nt-statistic: 0.172\np-value: 0.864\nThere is no significant difference in Blood Pressure between heart disease status.\n\n\n\n\nCholesterol Level Analysis\nFinally, we analyze cholesterol levels using the same approach.\n\n\n\n\n\n\n\n\n\n\n\nT-test results between Heart Disease Status for Cholesterol Level:\nt-statistic: -0.914\np-value: 0.361\nThere is no significant difference in Cholesterol Level between heart disease status."
+  },
+  {
+    "objectID": "index.html#overview",
+    "href": "index.html#overview",
+    "title": "Heart Disease Risk Factor Analysis Dashboard",
+    "section": "",
+    "text": "This dashboard analyzes a heart disease dataset from Kaggle, examining the relationships between various health indicators, lifestyle factors, and heart disease status. The analysis aims to identify key risk factors and patterns that may contribute to heart disease.\nData Source: Heart Disease Dataset on Kaggle\nProgram: Master of Science in Data Science, University of Colorado Boulder\n\n\n\n\n\n\nNote\n\n\n\nThis analysis used a random sample (50%) the original dataset for visualization purposes with Altair. For reproducibility, the sample is set to a random state of 0 in Pandas. df.sample(frac=0.50, random_state=0)"
+  },
+  {
+    "objectID": "index.html#demographic-lifestyle-factors",
+    "href": "index.html#demographic-lifestyle-factors",
+    "title": "Heart Disease Risk Factor Analysis Dashboard",
+    "section": "Demographic & Lifestyle Factors",
+    "text": "Demographic & Lifestyle Factors\nThis section explores the categorical variables in the dataset, including gender, diabetes status, smoking habits, and other lifestyle factors that may influence heart disease risk.\n\nGender and Diabetes Distribution\nThe charts below show the distribution of participants by gender and diabetes status. Understanding these demographic factors is important as they can significantly affect heart disease risk.\n\n\n\n\n\n\n\n\n\n\nHeart Disease Status and Smoking Habits\nThese charts display the distribution of heart disease status in the sample and smoking habits. Smoking is a well-known risk factor for cardiovascular disease, and this visualization helps us understand its prevalence in our dataset.\n\n\n\n\n\n\n\n\n\n\nBlood Pressure and Cholesterol Status\nHigh blood pressure and high cholesterol are major risk factors for heart disease. These visualizations show the distribution of participants with and without these conditions.\n\n\n\n\n\n\n\n\n\n\nStress and Sugar Consumption\nStress and dietary factors like sugar consumption can contribute to heart disease risk. These charts show the distribution of stress levels and sugar consumption habits in our sample.\n\n\n\n\n\n\n\n\n\n\nAlcohol Consumption\nAlcohol consumption can have complex effects on heart health. This chart displays the distribution of alcohol consumption patterns among participants.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nImportant\n\n\n\nThe distribution of the categorical variables are all uniform except for the Heart Disease Status. This is seems odd if this dataset is representative of the population and a random sample was taken."
+  },
+  {
+    "objectID": "index.html#comparing-heart-disease-groups",
+    "href": "index.html#comparing-heart-disease-groups",
+    "title": "Heart Disease Risk Factor Analysis Dashboard",
+    "section": "Comparing Heart Disease Groups",
+    "text": "Comparing Heart Disease Groups\nThis section compares participants with and without heart disease to identify potential differences in health metrics and risk factors.\n\nSummary Statistics by Heart Disease Status\nThe tables below show summary statistics for participants with and without heart disease. Comparing these values can help identify which metrics differ between the two groups.\n\nWith Heart Disease\n\n\n\n\n\n\n\n\n\nAge\nBlood Pressure\nCholesterol Level\nBMI\nSleep Hours\nTriglyceride Level\nFasting Blood Sugar\nCRP Level\nHomocysteine Level\n\n\n\n\ncount\n1022.00\n1021.00\n1019.00\n1022.00\n1022.00\n1022.00\n1019.00\n1019.00\n1021.00\n\n\nmean\n49.32\n149.71\n226.46\n29.07\n6.98\n250.20\n119.80\n7.36\n12.43\n\n\nstd\n18.35\n17.51\n43.01\n6.18\n1.79\n87.19\n23.57\n4.26\n4.37\n\n\nmin\n18.00\n120.00\n150.00\n18.01\n4.00\n100.00\n80.00\n0.01\n5.02\n\n\n25%\n34.00\n134.00\n189.00\n23.73\n5.40\n177.00\n99.00\n3.80\n8.61\n\n\n50%\n49.00\n150.00\n227.00\n29.27\n6.98\n245.50\n119.00\n7.24\n12.45\n\n\n75%\n66.00\n165.00\n265.00\n34.31\n8.56\n327.75\n141.00\n11.02\n16.24\n\n\nmax\n80.00\n180.00\n300.00\n39.94\n10.00\n400.00\n160.00\n15.00\n20.00\n\n\n\n\n\n\n\n\n\nWithout Heart Disease\n\n\n\n\n\n\n\n\n\nAge\nBlood Pressure\nCholesterol Level\nBMI\nSleep Hours\nTriglyceride Level\nFasting Blood Sugar\nCRP Level\nHomocysteine Level\n\n\n\n\ncount\n3964.00\n3968.00\n3963.00\n3968.00\n3966.00\n3972.00\n3970.00\n3966.00\n3968.00\n\n\nmean\n49.63\n149.81\n225.07\n28.99\n7.00\n249.05\n119.96\n7.51\n12.44\n\n\nstd\n18.09\n17.60\n43.73\n6.38\n1.75\n87.01\n23.65\n4.34\n4.32\n\n\nmin\n18.00\n120.00\n150.00\n18.00\n4.00\n100.00\n80.00\n0.01\n5.01\n\n\n25%\n34.00\n134.00\n187.00\n23.43\n5.46\n174.00\n99.00\n3.68\n8.69\n\n\n50%\n50.00\n149.00\n226.00\n28.98\n7.00\n248.00\n120.00\n7.55\n12.33\n\n\n75%\n65.00\n165.00\n262.50\n34.55\n8.55\n323.00\n141.00\n11.21\n16.10\n\n\nmax\n80.00\n180.00\n300.00\n40.00\n10.00\n400.00\n160.00\n15.00\n20.00\n\n\n\n\n\n\n\n\n\n\n\n\n\nNote\n\n\n\nLooking at these summary statistics, there don’t appear to be dramatic differences between groups at first glance. Further statistical analysis is needed to identify significant differences.\n\n\n\n\n\nCorrelation Analysis for Heart Disease Group\nThe heatmap below displays correlations between numerical variables for participants with heart disease. A correlation value ranges from -1 to 1:\n\nA value close to 1 means that as one variable increases, the other tends to increase as well (positive correlation)\nA value close to -1 means that as one variable increases, the other tends to decrease (negative correlation)\nA value close to 0 means there is little to no relationship between the variables\nFor correlations, neither variable is considered dependent or independent since we’re measuring their mutual relationship rather than causation\n\nFor example, if age and blood pressure had a correlation of 0.8, this would suggest that blood pressure tends to increase with age. The darker colors in the heatmap indicate stronger correlations (either positive or negative).\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nNote\n\n\n\nThe correlation plot shows that there are no strong correlations between the variables. That is to say, the variables are not highly dependent on one another."
+  },
+  {
+    "objectID": "index.html#health-metrics-by-heart-disease-status",
+    "href": "index.html#health-metrics-by-heart-disease-status",
+    "title": "Heart Disease Risk Factor Analysis Dashboard",
+    "section": "Health Metrics by Heart Disease Status",
+    "text": "Health Metrics by Heart Disease Status\nThis section uses boxplots to compare the distribution of key health metrics between participants with and without heart disease. Boxplots provide several key insights:\n\nThe box shows the interquartile range (IQR) containing the middle 50% of values:\nThe line inside the box represents the median\nThe whiskers extend to show the rest of the distribution\nPoints beyond the whiskers represent potential outliers\n\n\nAge, Blood Pressure, Cholesterol, BMI, and Sleep Hours\nThese boxplots show how age, blood pressure, cholesterol levels, BMI, and sleep hours differ between those with and without heart disease.\n\n\n\n\n\n\n\n\n\n\nTriglycerides, Blood Sugar, CRP, and Homocysteine\nThese additional boxplots examine differences in triglyceride levels, fasting blood sugar, CRP (C-reactive protein) levels, and homocysteine levels between the two groups."
+  },
+  {
+    "objectID": "index.html#interactive-risk-factor-analysis",
+    "href": "index.html#interactive-risk-factor-analysis",
+    "title": "Heart Disease Risk Factor Analysis Dashboard",
+    "section": "Interactive Risk Factor Analysis",
+    "text": "Interactive Risk Factor Analysis\nThis section provides interactive visualizations to explore relationships between age, various health metrics, and heart disease status across different lifestyle groups.\n\nSmoking and Heart Disease\nThese interactive plots allow exploration of the relationship between age, various health metrics, and heart disease status specifically for smokers and non-smokers.\n\n\n\n\n\n\nTip\n\n\n\nHow to use: Select different health metrics from the dropdown menu to see how they relate to age among smokers. Use the Heart Disease Status filter to compare those with and without heart disease.\n\n\n\n\n\n\n\n\n\n\n\n\nCombined Risk Factors\nThese visualizations examine the combined effects of multiple risk factors, specifically smoking combined with diabetes or high alcohol consumption.\n\n\n\n\n\n\n\n\n\n\nLow-Risk vs High-Risk Group Analysis\nThis visualization examines participants with minimal risk factors: non-smokers who do not consume alcohol. The high-risk group is smokers who consume alcohol with a family history of heart disease.\n.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nTip\n\n\n\nAfter you play with the plots, you may notice that the high risk group has a higher average sleep hours. We will test this hypothesis with a t-test to see if the difference is statistically significant.\n\n\n\n\n\nT-test results between High-Risk and Low-Risk Groups for Sleep Hours:\nt-statistic: -1.406\np-value: 0.163\nThere is no significant difference in Sleep Hours between High-Risk and Low-Risk Groups."
+  },
+  {
+    "objectID": "index.html#key-findings",
+    "href": "index.html#key-findings",
+    "title": "Heart Disease Risk Factor Analysis Dashboard",
+    "section": "Key Findings",
+    "text": "Key Findings\nBased on the analyses performed, here are the key findings from this dataset:\n\nSignificant Results: There was no statistically significant results found in the t-tests for blood pressure, cholesterol level, or BMI. Other tests could be performed to find the relationship between the variables but do to the uniform nature of the data we probably need to use more complex models.\nRisk Factor Combinations: The interactive visualizations suggest that combinations of risk factors (smoking with high alcohol consumption) may have compounding effects on health like fasting blood sugar levels.\nAge Relationships: The regression lines in the interactive plots show how the relationship between age and various health metrics differs across lifestyle groups and heart disease status.\nData Distribution: The dataset is uniform in the distribution of the categorical variables."
+  },
+  {
+    "objectID": "index.html#limitations-and-future-work",
+    "href": "index.html#limitations-and-future-work",
+    "title": "Heart Disease Risk Factor Analysis Dashboard",
+    "section": "Limitations and Future Work",
+    "text": "Limitations and Future Work\n\nThe dataset is designed for machine learning and therefore has a uniform distribution of the categorical variables to help with classification tasks. However, this makes it difficult to make any definitive conclusions about the relationship between the variables with simple statistical models.\nFurther multivariate analyses could help identify interactions between multiple risk factors.\nPredictive modeling should be applied to determine which factors best predict heart disease status as simple statistical models are not sufficient to make any definitive conclusions.\nAdditional lifestyle and genetic factors not included in this dataset may play important roles in heart disease risk."
+  },
+  {
+    "objectID": "about.html#this-visualization-dashboard-serves-two-primary-tasks",
+    "href": "about.html#this-visualization-dashboard-serves-two-primary-tasks",
+    "title": "Survey",
+    "section": "",
+    "text": "Exploratory Analysis: Users delve into an unknown heart disease dataset to uncover trends, patterns, and potential relationships without prior assumptions, generating new hypotheses.\nConfirmatory Analysis: Users then test and validate these hypotheses using statistical methods to assess the significance and strength of the identified relationships.\nSurvey: Please take the survey to share your thoughts and feedback about the visualization dashboard and how we can improve it and how well it accomplished these tasks.\n\n\nLoading…"
+  }
+]
