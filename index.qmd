@@ -1088,11 +1088,11 @@ Based on the analyses performed, here are the key findings from this dataset:
 
 3. **Age Relationships**: The regression lines in the interactive plots show how the relationship between age and various health metrics differs across lifestyle groups and heart disease status.
 
-4. **Data Distribution**: The dataset is uniform in the distribution of the categorical variables.
+4. **Data Distribution**: The dataset is uniform in nature, as is seen in the boxplots, categorical plots, and scatter plots.
 
 ## Limitations and Future Work {.unnumbered}
 
-- The dataset is designed for machine learning and therefore has a uniform distribution of the categorical variables to help with classification tasks. However, this makes it difficult to make any definitive conclusions about the relationship between the variables with simple statistical models.
-- Further multivariate analyses could help identify interactions between multiple risk factors.
+- The dataset is designed for machine learning and therefore has a uniform distribution variables to help with classification tasks. However, this makes it difficult to make any definitive conclusions about the relationship between the variables with simple statistical models.
+- Further multivariate analyses may help identify interactions between multiple risk factors.
 - Predictive modeling should be applied to determine which factors best predict heart disease status as simple statistical models are not sufficient to make any definitive conclusions.
 - Additional lifestyle and genetic factors not included in this dataset may play important roles in heart disease risk.
